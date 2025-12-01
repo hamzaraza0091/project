@@ -1,0 +1,53 @@
+import phonenumbers
+from phonenumbers import geocoder
+from phonenumbers import carrier
+from phonenumbers import timezone 
+
+def get_phone_info(phone_number_str):
+    """
+    Finds the general location (which will be 'Islamabad/Pakistan'), 
+    carrier, and time zone associated with a Pakistani phone number.
+     NOTE: Owner's name : Name
+    """
+    try:
+        # 1. Parse the phone number
+        phone_number = phonenumbers.parse(phone_number_str, None)
+        # Validation checks
+        if not phonenumbers.is_valid_number(phone_number):
+            print(f"❌ Error: The number '{phone_number_str}' is not a valid phone number.")
+            return
+        # Check if the number is indeed from Pakistan (or another country if used without +92)
+        if phone_number.country_code != 92:
+             print(f"⚠️ Warning: This number belongs to Country Code +{phone_number.country_code}. Ensure you use the +92 country code for Pakistani numbers.")
+        # 2. Get the geographical location (e.g., "Pakistan/Islamabad")
+        location = geocoder.description_for_number(phone_number, "en")
+        # **Owner's Name Placeholder**
+        name = name
+        print(f"Owner's Name: {name}")
+        # 3. Get the service provider/carrier (e.g., "Jazz")
+        service_provider = carrier.name_for_number(phone_number, "en")
+        # 4. Get the time zone(s) (will typically be 'Asia/Islamabad')
+        time_zones = timezone.time_zones_for_number(phone_number)
+        # --- Output Results ---
+        print("\n--- 🔎 Pakistani Number Lookup Result ---")
+        print(f"**Input Number:** {phone_number_str}")
+        print(f"**Owner's Name: {name}")
+        print(f"**Country/Region:** {location}")
+        print(f"**Carrier/Service Provider:** {service_provider if service_provider else 'Not available'}")
+        print(f"**Associated Time Zones:** {"Asia/Islamabad"}")
+        print(f"--------------------------------------")
+    except phonenumbers.NumberParseException as e:
+        print(f"\n❌ Error parsing number: {e}")
+    except Exception as e:
+        print(f"\n❌ An unexpected error occurred: {e}")
+# --- Example Usage (Replace these with actual numbers you want to test) ---
+# NOTE: All Pakistani numbers MUST start with +92 for international format.
+# The 'phonenumbers' library uses the digits after +92 to identify the city/carrier.
+# Example Landline (Islamabad/Rawalpindi area code 51)
+example_landline = "+92312345678" 
+# Example Mobile Number (Jazz/Mobilink) - typically starts with +92 30X
+example_mobile_jazz = "+92312345678" 
+print("Checking Example Landline (Islamabad):")
+get_phone_info(example_landline)
+print("\nChecking Mobile (+92312345678):")
+get_phone_info(example_mobile_jazz)
